@@ -20,12 +20,12 @@ def predict():
 		try:
 			json_ = request.json
 
-            mail= []
+            		mail= []
 
-            for i in word_dict:
-        		mail.append(json_.split(" ").count(i[0]))
+            		for i in word_dict:
+        			mail.append(json_.split(" ").count(i[0]))
 
-            sample = np.array(mail)
+            		sample = np.array(mail)
 
 			prediction= list(model.predict(sample))
 
