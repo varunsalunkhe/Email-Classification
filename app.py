@@ -71,14 +71,15 @@ def mail():
         try:
             # json_ = request.json
 
+            
             if request.method == 'POST':
-                json_ = request.form.get('text')
+                data = request.form.get('text')
 
-            print(json_)
+            print(data)
             
             mail = []
             for i in word_dict:
-                mail.append(json_.split(" ").count(i[0]))
+                mail.append(data.split(" ").count(i[0]))
                 
             sample = np.array(mail).reshape(1,3000)
 
@@ -90,10 +91,10 @@ def mail():
 
 
                 # return jsonify({"Prediction ": "spam"})
-                render_template('page.html', Prediction= "spam")
+                return render_template('page.html', Prediction= "spam")
 
             else:
-                render_template('page.html', Prediction= "not spam")
+                return render_template('page.html', Prediction= "not spam")
                 # return jsonify({"Prediction ": "not spam"})
 
 
