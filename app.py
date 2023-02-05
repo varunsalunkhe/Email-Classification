@@ -1,8 +1,14 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[7]:
+
+
 import pandas as pd
-import numpy as pd
+import numpy as np
 import joblib
 import traceback
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, url_for
 
 app=Flask(__name__)
 
@@ -12,31 +18,57 @@ print("model loaded")
 word_dict = joblib.load("word_dict.pkl")
 print("word_dict loaded")
 
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-@app.route("/mail", methods=["GET","POST"])
+
+
+@app.route("/predict", methods=["GET","POST"])
 
 def predict():
-	if model:
-		try:
-			json_ = request.json
+    if model:
+        try:
+            # json_ = request.json
 
-            		mail= []
+            json_ = request.form.get("text")
 
-            		for i in word_dict:
-        			mail.append(json_.split(" ").count(i[0]))
+            print(json_)
+            
+            mail = []
+            for i in word_dict:
+                mail.append(json_.split(" ").count(i[0]))
+                
+            sample = np.array(mail).reshape(1,3000)
 
-            		sample = np.array(mail)
+           
 
-			prediction= list(model.predict(sample))
+            prediction= model.predict(sample)
 
-			return jsonify({"Prediction ": str(prediction)})	
-				
+            if prediction == 0:
 
-		except:
-			return jsonify({"trace ": traceback.format_exc()})
-	else:
-		print("first train the model")
-		return ("no model is here to use")
+
+                # return jsonify({"Prediction ": "spam"})
+                render_template('index.html', Prediction= "spam")
+
+            else:
+                render_template('index.html', Prediction= "not spam")
+                # return jsonify({"Prediction ": "not spam"})
+
+
+
+        except:
+            return jsonify({"trace ": traceback.format_exc()})
+    else:
+        print("first train the model")
+        return ("no model is here to use")
 
 if __name__ == "__main__":
-	app.run(debug= True)
+    app.run(debug= True)
+
+
+
+
+
+
+
